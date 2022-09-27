@@ -6,7 +6,9 @@
     "node": "18.8.0",
     "npm": "8.18.0"
   },
+  
   "scripts": {
+    "heroku-postbuild": "npm run build",
     "build": "tsc",
     "start": "nodemon src/server.ts",
     "start:dev": "ts-node index.ts" 
