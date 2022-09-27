@@ -11,12 +11,12 @@ const resolvers ={
     Mutation
 }
 
-const run = async () => console.log("HOLA")/*{
+const run = async () =>{
     await connectDB();
     const server = new ApolloServer({typeDefs, resolvers});
 
     server.listen(4000).then(()=>{
     console.log(`Server escuchando en el puerto 4000`)
-})}*/
+})}
 
 run();
