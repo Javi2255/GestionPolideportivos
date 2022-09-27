@@ -8,7 +8,7 @@
   },
   
   "scripts": {
-    "heroku-postbuild": "npm run build",
+    "heroku-postbuild": "npm start",
     "build": "tsc",
     "start": "nodemon src/server.ts",
     "start:dev": "ts-node index.ts" 
