@@ -23,64 +23,96 @@ const Mutation = {
             const client = await connectDB();
             const db: Db = client;
             const users=await db.collection<User>("Usuarios")
-            const existingUser=await users.findOne({name:Usuario.name,email:Usuario.email})
+            const existingUser=await users.findOne({email:Usuario.email})
 
             if(existingUser){
-
-                console.log("Ya existe este usuario")
-                console.log(existingUser)
-                return false
-
+                return 1
             }else{    
+                let id=uuidv4()
                 let secure_code=secure_code_random()
-                await users.insertOne({id:uuidv4(),email:Usuario.email,name:Usuario.name,password:Usuario.password,age:Usuario.age,secure_code:secure_code,statusAccount:"Disable"})
-        
+                await users.insertOne({id:id,email:Usuario.email,name:Usuario.name,password:Usuario.password,age:Usuario.age,secure_code:secure_code,statusAccount:"Disable"})
+                let urlRegistro=`http://localhost:3000/register/${id}`
                 transporter.sendMail(
                     {
                         from: "javier.perez.celada@gmail.com",
                         to: Usuario.email,
                         subject: "CREACIÓN USUARIO",
-                        html: `<br>Te has registrado en la aplicacion con el nombre <b>${Usuario.name}</b></br> <br>Tu código de verificacion es: <b>${secure_code}</b></br>`
+                        html: `<br>Te has registrado en la aplicacion con el nombre <b>${Usuario.name}</b></br> <br>Tu código de verificacion es: <b>${secure_code}</b></br><br><a href=${urlRegistro}/>Pulse aquí para habilitar la cuenta</a></br>`
                     }
                 )
 
-                return true
+                return 0
                 
             }
         }catch(e){
             throw 1
         }
-    },   
-    EnableAccount: async(parent:any, Usuario:User, ctx:any, info:any)=>{
+    },
+    LogIn: async(parent:any, Usuario:User, ctx:any, info:any)=>{
 
         try{
             const client = await connectDB();
             const db: Db = client;
             const users=await db.collection<User>("Usuarios")
-            const existingUser=await users.findOne({email:Usuario.email,password:Usuario.password})
+            const existingUser=await users.findOne({email:Usuario.email})
             if(!existingUser){
-                console.log("No existe este email o la contraseña es incorrecta")
-                return false
+                return 1
             }else{
-                if(existingUser.statusAccount=="Disable"){
-                    if(existingUser.secure_code==Usuario.secure_code){
-                        await users.updateOne({email:Usuario.email,password:Usuario.password},{$set:{statusAccount:"Able"}})
-                        return true
+                if(existingUser.password==Usuario.password){
+                    if(existingUser.statusAccount=="Disable"){
+                        return 3
                     }else{
-                        console.log("El codigo introducido no es correcto")
-                        return false
-                    }
+                        return 0
+                    }  
                 }else{
-                    console.log("Ya dispones de la cuenta habilitada")
-                    return false
-                }        
+                    return 2
+                }
+            }
+            
+        }catch(e){
+            throw 1
+        }
+    },
+    AbleAccount: async(parent:any, Usuario:User, ctx:any, info:any)=>{
+
+        try{
+            const client = await connectDB();
+            const db: Db = client;
+            const users=await db.collection<User>("Usuarios")
+            const existingUser=await users.findOne({id:Usuario.id})
+            if(!existingUser){
+                return 1
+            }else{
+                if(existingUser.secure_code==Usuario.secure_code){
+                    await users.updateOne({id:Usuario.id},{$set:{statusAccount:"Able"}})
+                    return 0
+                }else{
+                    return 2
+                }
+                
             }
             
         }catch(e){
             throw 1
         }
     }
+
 }  
 
 
 export {Mutation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

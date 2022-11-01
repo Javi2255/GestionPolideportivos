@@ -14,11 +14,14 @@ type User{
 
 type Query{
     GetAllUsers:[User!]
-    DeleteAllUsers:Boolean!
+    DeleteAllUsers:Int!
+    GetUser(email:String!):User!
+    GetUserById(id:String!):User!
 }
 type Mutation{
-    CreateUser(email:String!,name:String!,password:String!,age:Int!):Boolean!  
-    EnableAccount(email:String!,password:String!,secure_code:String!):Boolean!
+    CreateUser(email:String!,name:String!,password:String!,age:String!):Int!  
+    LogIn(email:String!,password:String!):Int!
+    AbleAccount(id:String!,secure_code:String!):Int!
 }
 `
 ;

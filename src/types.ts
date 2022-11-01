@@ -1,5 +1,3 @@
-const {v4: uuidv4} = require('uuid');
-
 export interface User{
     id: String
     email: String
